@@ -20,7 +20,7 @@ public class JsonUtils {
 		try {
 			return ow.writeValueAsString(t);
 		} catch (JsonProcessingException e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 			return null;
 		}
 	}
@@ -32,7 +32,7 @@ public class JsonUtils {
 			ObjectReader reader = mapper.readerFor(classe);
 			return reader.readValue(json);
 		} catch (IOException e) {
-			LOG.error(e.getMessage());
+			LOG.error(e.getMessage(), e);
 			return null;
 		}
 	}
