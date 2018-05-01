@@ -6,6 +6,7 @@ import java.util.Locale;
 
 import javax.ws.rs.BadRequestException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,6 +16,7 @@ import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -48,6 +50,18 @@ public class CommonsExceptionMapper {
 		LOG.warn(e.getMessage(), e);
 		return new CommonsExceptionResponse(HttpStatus.BAD_REQUEST, e.getMessage(),
 				map(e.getBindingResult().getFieldErrors()));
+	}
+
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public CommonsExceptionResponse handleException(HttpMessageNotReadableException e) {
+		LOG.warn(e.getMessage(), e);
+		String message = e.getMessage();
+		String cause = "Required request body is missing";
+		if (StringUtils.startsWith(e.getMessage(), cause)) {
+			message = "Requisição inválida";
+		}
+		return new CommonsExceptionResponse(HttpStatus.BAD_REQUEST, message);
 	}
 
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
