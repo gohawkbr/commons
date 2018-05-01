@@ -16,7 +16,7 @@ public class TokenUtils {
 
 	private static final String TAG = TokenUtils.class.getSimpleName();
 	private static final Logger LOG = LoggerFactory.getLogger(TokenUtils.class);
-	private static final String BEARER = "Bearer ";
+	private static final String BEARER = "Bearer";
 	public static final String AUTHORIZATION_HEADER = "Authorization";
 
 	public static String criar(Number id, HttpServletRequest request, HttpServletResponse response) {
@@ -49,7 +49,7 @@ public class TokenUtils {
 		LOG.info(TAG, "getToken");
 		String header = request.getHeader(AUTHORIZATION_HEADER);
 		if (!StringUtils.isBlank(header) && StringUtils.contains(header, BEARER)) {
-			return StringUtils.remove(header, BEARER);
+			return StringUtils.trim(StringUtils.remove(header, BEARER));
 		}
 		throw new TokenException("Requisição não possui token");
 	}
@@ -113,13 +113,14 @@ public class TokenUtils {
 		}
 
 		public boolean valido() {
-			return getDataExpiracao() != null && getDataExpiracao().after(new Date()) && getId() != null
+			return getDataExpiracao() != null && getDataExpiracao().before(new Date()) && getId() != null
 					&& getId().longValue() > 0l;
 		}
 
 		public void renovar() {
 			if (valido()) {
 				setDataExpiracao(new Date(new DateTime(new Date()).plusMinutes(30).getMillis()));
+				return;
 			}
 			throw new RuntimeException("Token inválido");
 		}
