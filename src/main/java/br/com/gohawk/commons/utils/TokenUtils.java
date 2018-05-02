@@ -45,6 +45,13 @@ public class TokenUtils {
 		response.addHeader("Access-Control-Expose-Headers", AUTHORIZATION_HEADER);
 	}
 
+	public static Number getIdUsuarioLogado(HttpServletRequest request) {
+		LOG.info(TAG, "getIdUsuarioLogado");
+		String message = getToken(request);
+		Token token = decriptografe(message);
+		return token.getId();
+	}
+
 	private static String getToken(HttpServletRequest request) {
 		LOG.info(TAG, "getToken");
 		String header = request.getHeader(AUTHORIZATION_HEADER);
@@ -113,7 +120,7 @@ public class TokenUtils {
 		}
 
 		public boolean valido() {
-			return getDataExpiracao() != null && getDataExpiracao().before(new Date()) && getId() != null
+			return getDataExpiracao() != null && getDataExpiracao().after(new Date()) && getId() != null
 					&& getId().longValue() > 0l;
 		}
 
