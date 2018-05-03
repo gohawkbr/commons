@@ -89,11 +89,12 @@ public class CommonsExceptionMapper {
 	}
 
 	@Order(Ordered.LOWEST_PRECEDENCE)
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	@ExceptionHandler(Exception.class)
 	public CommonsExceptionResponse handleException(Exception e) {
 		LOG.error(e.getMessage(), e);
-		return new CommonsExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR, e.getMessage());
+		return new CommonsExceptionResponse(HttpStatus.INTERNAL_SERVER_ERROR,
+				StringUtils.isBlank(e.getMessage()) ? e.getCause().getClass().getSimpleName() : e.getMessage());
 	}
 
 	private List<CommonsValidationMapper> map(List<FieldError> fieldErrors) {
