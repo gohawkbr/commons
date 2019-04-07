@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 
-public class ValidationException extends Exception {
+public class ValidationException extends RuntimeException {
 
 	private static final long serialVersionUID = 6926813127151955168L;
 
